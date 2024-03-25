@@ -36,7 +36,7 @@ export interface SpeechInputReturnType {
 const States = {
   LOADING: "LOADING",
   WAITING: "WAITING",
-  LISTENING: "WAITING",
+  LISTENING: "LISTENING",
   COMPLETED: "COMPLETED",
 };
 
@@ -105,20 +105,20 @@ export const useSpeechInput = (): SpeechInputReturnType => {
       language: "ko-KR",
       continuous: false,
     });
+    setThisState(States.LISTENING);
   };
 
   // supports 상태 관리
   useEffect(() => {
-    setSupports(browserSupportsSpeechRecognition && isLoaded);
-  }, [isLoaded, browserSupportsSpeechRecognition]);
+    setSupports(browserSupportsSpeechRecognition);
+  }, [browserSupportsSpeechRecognition]);
 
   // waiting 상태에서 키워드가 인식되면 listening 상태로 전이 (키워드가 인식되면 isPorcupineListening이 false로 변경됨)
   useEffect(() => {
-    if (thisState === States.WAITING && isPorcupineListening === false) {
+    if (thisState === States.WAITING && isLoaded && isPorcupineListening === false) {
       _startListening();
-      setThisState(States.LISTENING);
     }
-  }, [thisState, isPorcupineListening]);
+  }, [thisState, isLoaded, isPorcupineListening]);
 
   // listening 상태에서 SpeechRecognition이 종료되면 completed 상태로 전이 (SpeechRecognition은 사용자 발화가 종료되면 자동으로 종료)
   useEffect(() => {
