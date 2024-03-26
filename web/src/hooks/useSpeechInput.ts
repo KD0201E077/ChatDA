@@ -1,6 +1,8 @@
 import { usePorcupine } from "@picovoice/porcupine-react";
 import { useCallback, useEffect, useState } from "react";
 import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
+import { hi_ppn } from "../assets/porcupine/hi_ppn";
+import { ko_pv } from "../assets/porcupine/ko_pv";
 
 export interface SpeechInputReturnType {
   /**
@@ -26,7 +28,7 @@ export interface SpeechInputReturnType {
   /**
    * SpeechInput을 초기화합니다. 초기화 완료 후 대기 상태로 변경합니다.
    */
-  init: () => void;
+  init: () => Promise<void>;
   /**
    * SpeechInput를 대기 상태로 변경합니다. `isCompleted`이 `true`인 경우에만 호출 가능합니다; 아닐 경우 예외를 발생합니다.
    */
@@ -35,7 +37,9 @@ export interface SpeechInputReturnType {
 
 const States = {
   LOADING: "LOADING",
+  TO_WAITING: "TO_WAITING",
   WAITING: "WAITING",
+  TO_LISTENING: "TO_LISTENING",
   LISTENING: "LISTENING",
   COMPLETED: "COMPLETED",
 };
@@ -48,10 +52,12 @@ const States = {
  */
 export const useSpeechInput = (): SpeechInputReturnType => {
   const {
-    isLoaded,
+    keywordDetection,
     isListening: isPorcupineListening,
     init: initPorcupine,
     start: startPorcupine,
+    stop: stopPorcupine,
+    error,
   } = usePorcupine();
   const { transcript, listening, resetTranscript, browserSupportsSpeechRecognition } =
     useSpeechRecognition();
@@ -62,22 +68,23 @@ export const useSpeechInput = (): SpeechInputReturnType => {
 
   const init = useCallback(async () => {
     try {
+      const { VITE_PICO_ACCESS_KEY } = import.meta.env;
       await initPorcupine(
-        process.env.REACT_APP_PICO_ACCESS_KEY,
+        VITE_PICO_ACCESS_KEY,
         // customKeyword파일을 입력해주는 파라미터로 public path에 ppn파일을 넣고 파일 명을 적어주면 됩니다.
         // 주의해야 할 점은 반드시 keyword에는 label을 붙여줘야 나중에 keyword Detection이 됐을때 인식이 됩니다.
         // 키워드 파일: https://github.com/Picovoice/porcupine/tree/master/resources/keyword_files/wasm
         // 커스텀 키워드 생성: https://console.picovoice.ai/
         {
           // 하이삼닷 : hi.ppn, 헬로우삼닷 : hello.ppn
-          publicPath: "hi.ppn",
+          base64: hi_ppn,
           label: "hi",
         },
         // 3번째 파라미터는 인식을 위해 사용할 모델을 입력받는 파라미터입니다.
         // 우리는 한국어를 사용할 것이기 때문에 한국어 모델을 사용해줍니다.
         // 언어별 모델 파일: https://github.com/Picovoice/porcupine/tree/master/lib/common
         {
-          publicPath: "porcupine_params_ko.pv",
+          base64: ko_pv,
         },
       );
       _startWaiting();
@@ -85,6 +92,17 @@ export const useSpeechInput = (): SpeechInputReturnType => {
       console.error("Failed to initialize Porcupine:", err);
     }
   }, [initPorcupine]);
+
+  // // TODO: DEBUG
+  // useEffect(() => {
+  //   console.log(thisState);
+  // }, [thisState]);
+
+  useEffect(() => {
+    if (error) {
+      console.error(error);
+    }
+  }, [error]);
 
   const start = () => {
     if (thisState !== States.COMPLETED) {
@@ -95,17 +113,24 @@ export const useSpeechInput = (): SpeechInputReturnType => {
 
   const _startWaiting = () => {
     startPorcupine();
-    setThisState(States.WAITING);
+    setThisState(States.TO_WAITING);
   };
 
   const _startListening = () => {
+    stopPorcupine();
     resetTranscript();
     setContent("");
+    keywordDetection.index = -1;
     SpeechRecognition.startListening({
       language: "ko-KR",
       continuous: false,
     });
-    setThisState(States.LISTENING);
+    setThisState(States.TO_LISTENING);
+  };
+
+  const _stopListening = () => {
+    SpeechRecognition.stopListening();
+    setThisState(States.COMPLETED);
   };
 
   // supports 상태 관리
@@ -113,17 +138,35 @@ export const useSpeechInput = (): SpeechInputReturnType => {
     setSupports(browserSupportsSpeechRecognition);
   }, [browserSupportsSpeechRecognition]);
 
+  // Porcupine이 실행될 때까지 waiting 상태 전이 대기
+  useEffect(() => {
+    if (thisState === States.TO_WAITING && isPorcupineListening === true) {
+      setThisState(States.WAITING);
+    }
+  }, [thisState, isPorcupineListening]);
+
   // waiting 상태에서 키워드가 인식되면 listening 상태로 전이 (키워드가 인식되면 isPorcupineListening이 false로 변경됨)
   useEffect(() => {
-    if (thisState === States.WAITING && isLoaded && isPorcupineListening === false) {
+    if (thisState === States.WAITING && keywordDetection?.index >= 0) {
       _startListening();
     }
-  }, [thisState, isLoaded, isPorcupineListening]);
+  }, [thisState, keywordDetection]);
+
+  // SpeechRecognition이 실행될 때까지 listening 상태 전이 대기
+  useEffect(() => {
+    if (thisState === States.TO_LISTENING && listening) {
+      setThisState(States.LISTENING);
+    }
+  }, [thisState, listening]);
 
   // listening 상태에서 SpeechRecognition이 종료되면 completed 상태로 전이 (SpeechRecognition은 사용자 발화가 종료되면 자동으로 종료)
   useEffect(() => {
     if (thisState === States.LISTENING && !listening) {
-      setThisState(States.COMPLETED);
+      _stopListening();
+      // 인식한 내용이 없으면 다시 인식 시작
+      if (content.trim() === "") {
+        _startListening();
+      }
     }
   }, [thisState, listening]);
 
