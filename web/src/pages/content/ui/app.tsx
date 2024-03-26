@@ -11,6 +11,10 @@ import CloseIcon from "@mui/icons-material/Close";
 const rankingIconPath = "icons/ranking_icon.png";
 const searchIconPath = "icons/search_icon.png";
 
+import { StyledEngineProvider } from "@mui/material/styles";
+import { useSpeechInput } from "@root/src/hooks/useSpeechInput";
+import { request } from "@root/src/apis/requestBuilder";
+
 export default function App() {
   const [isOpenMainModal, setIsOpenMainModal] = useState<boolean>(false);
   const [isOpenExpandModal, setIsOpenExpandModal] = useState<boolean>(false);
@@ -252,6 +256,8 @@ export default function App() {
                 setMessages={setMessages}
                 handleOpenExpandModal={handleOpenExpandModal}
                 changeSelectedModelNo={changeSelectedModelNo}
+                isSpeechDisplay={isSpeechInput}
+                speechText={speechText}
               />
             </S.ChatMainContent>
           </S.ChatMainWrapper>

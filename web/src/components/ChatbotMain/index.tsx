@@ -13,6 +13,8 @@ export default function ChatbotMain(props: {
   setMessages: Dispatch<SetStateAction<T.MessagesProps>>;
   handleOpenExpandModal: (st: T.ExpandModalStateType) => void;
   changeSelectedModelNo: (models: string[]) => void;
+  isSpeechDisplay?: boolean;
+  speechText?: string;
 }) {
   const [currentTypingId, setCurrentTypingId] = useState<number | null>(null);
 
@@ -229,7 +231,11 @@ export default function ChatbotMain(props: {
         />
       </S.ChatMessageWrapper>
       <S.ChatInputWrapper>
-        <Sub.MessageForm onSendMessage={handleSendMessage} />
+        {props.isSpeechDisplay ? (
+          <Sub.SpeechMessageDisplayForm message={props.speechText} />
+        ) : (
+          <Sub.MessageForm onSendMessage={handleSendMessage} />
+        )}
       </S.ChatInputWrapper>
     </S.ChatMainWrapper>
   );
