@@ -131,9 +131,11 @@ def get_output(user_input, search):
 
         if result and len(result) > 0:
             # 얻은 결과로 답변 생성하는 체인 구성
-            answer_chain = prompt.answer_prompt | llm_stream | StrOutputParser()
+            # answer_chain = prompt.answer_prompt | llm_stream | StrOutputParser()
+            answer_chain = prompt.answer_prompt | llm | StrOutputParser()
 
             # 유저 입력으로부터 답변 생성
+            # result = answer_chain.stream({"question": user_input, "query": query[0], "result": result})
             result = answer_chain.stream({"question": user_input, "query": query[0], "result": result})
 
         else:
@@ -152,11 +154,12 @@ def get_output(user_input, search):
     }
 
 
-# # 체인 중간 과정 보기
-# set_debug(True)
-#
-# # 테스트용
-# if __name__ == '__main__':
-#     res = get_output(user_input='용량이 600L이상 되는 냉장고를 가격이 낮은 순으로 알려줘', search=False)
-#     print(f"type : {res['type']}")
-#     print(f"content : {res['content']}")
+# 체인 중간 과정 보기
+set_debug(True)
+
+# 테스트용
+if __name__ == '__main__':
+    res = get_output(user_input='RF60DB9Z71APG 설명해줘', search=False)
+    res["content"].stream()
+    print(f"type : {res['type']}")
+    print(f"content : {res['content']}")
