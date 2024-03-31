@@ -576,36 +576,69 @@ export default function App() {
     }
   }, [isCompleted]);
 
+  // 반응형 확장모달 챗봇에 설치
+  const handleClickExpandModal = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    if (isOpenExpandModal && event.target === event.currentTarget) {
+      handleCloseExpandModal();
+    }
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       {/* mui component를 사용하는 경우 아래와 같이 StyledEngineProvider를 반드시 사용해야 합니다!*/}
       <StyledEngineProvider injectFirst>
         <S.WholeWrapper>
-          <S.ChatExpandModal
-            open={isOpenExpandModal}
-            onClose={handleCloseExpandModal}
-            disableScrollLock={true}
-          >
-            <S.CloseBtn onClick={handleCloseExpandModal}>
-              <CloseIcon />
-            </S.CloseBtn>
-            {expandModalState === "popular" ? (
-              <P.PopularItemPage />
-            ) : expandModalState === "info" ? (
-              <P.DetailSpecPage selectedModelNo={selectedModelNo} />
-            ) : expandModalState === "compare" ? (
-              <P.CompareSpecPage selectedModelNo={selectedModelNo} />
-            ) : (
-              expandModalState === "search" && <P.SearchPage />
-            )}
-          </S.ChatExpandModal>
+          {window.innerWidth > 800 && (
+            <S.ChatExpandModal
+              open={isOpenExpandModal}
+              onClose={handleCloseExpandModal}
+              disableScrollLock={true}
+            >
+              <S.CloseBtn onClick={handleCloseExpandModal}>
+                <CloseIcon />
+              </S.CloseBtn>
+              {expandModalState === "popular" ? (
+                <P.PopularItemPage />
+              ) : expandModalState === "info" ? (
+                <P.DetailSpecPage selectedModelNo={selectedModelNo} />
+              ) : expandModalState === "compare" ? (
+                <P.CompareSpecPage selectedModelNo={selectedModelNo} />
+              ) : (
+                expandModalState === "search" && <P.SearchPage />
+              )}
+            </S.ChatExpandModal>
+          )}
 
           <S.ChatMainModal
             open={isOpenMainModal}
             onClose={handleCloseMainModal}
             disableScrollLock={true}
           >
-            <S.ChatMainWrapper>
+            <S.ChatMainWrapper id="CMW@@@@@@@@@@">
+              {window.innerWidth <= 800 && (
+                <>
+                  <S.ChatExpandModalMobileBackDrop isOpen={isOpenExpandModal} />
+
+                  <S.ChatExpandModalMobile
+                    isOpen={isOpenExpandModal}
+                    onClick={handleClickExpandModal}
+                  >
+                    <S.CloseBtn onClick={handleCloseExpandModal}>
+                      <CloseIcon />
+                    </S.CloseBtn>
+                    {expandModalState === "popular" ? (
+                      <P.PopularItemPage />
+                    ) : expandModalState === "info" ? (
+                      <P.DetailSpecPage selectedModelNo={selectedModelNo} />
+                    ) : expandModalState === "compare" ? (
+                      <P.CompareSpecPage selectedModelNo={selectedModelNo} />
+                    ) : (
+                      expandModalState === "search" && <P.SearchPage />
+                    )}
+                  </S.ChatExpandModalMobile>
+                </>
+              )}
+
               <S.ChatMainHeader>
                 <S.HeaderWords>
                   <p>

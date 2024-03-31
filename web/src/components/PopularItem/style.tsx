@@ -26,16 +26,26 @@ export const RankWrapper = styled.div`
   z-index: 2000;
   cursor: default;
   user-select: none;
+  @media screen and (max-width: 800px) {
+    width: 43px;
+    height: 41px;
+    top: 2px;
+    left: 2px;
+  }
 
   span {
     font-size: 36px;
     font-weight: bold;
     color: ${theme.bordercolor};
+
+    @media screen and (max-width: 800px) {
+      font-size: 24px;
+    }
   }
 `;
 
 export const PopularItemDiv = styled.div`
-  margin: 15px 0 15px 17px;
+  margin: 15px 0 15px 10px;
 `;
 
 export const AccordionWrapper = styled(Accordion)`
@@ -54,6 +64,10 @@ export const AccordionSummaryWrapper = styled(AccordionSummary)`
     border-radius: 30px;
     box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.25);
 
+    @media screen and (max-width: 800px) {
+      width: 352px;
+      gap: 0;
+    }
     .MuiAccordionSummary-contentGutters {
       margin: 0;
     }
@@ -67,11 +81,50 @@ export const AccordionSummaryWrapper = styled(AccordionSummary)`
   }
 `;
 
+export const AccordionSummaryMobileWrapper = styled(AccordionSummary)`
+  && {
+    width: 585px;
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    padding: 6px 15px 6px 0;
+    border-radius: 30px;
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.25);
+
+    @media screen and (max-width: 800px) {
+      width: 352px;
+      gap: 0;
+    }
+    .MuiAccordionSummary-contentGutters {
+      margin: 0;
+    }
+
+    .MuiAccordionSummary-content {
+      display: flex;
+      flex-direction: column;
+      width: 476px;
+      align-items: center;
+      gap: 20px;
+    }
+  }
+`;
+
+export const MobileDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
 export const ImgContentWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 0;
+
+  img {
+    @media screen and (max-width: 800px) {
+      width: 140px;
+    }
+  }
 `;
 
 export const ContentWrapper = styled.div`
@@ -92,6 +145,22 @@ export const ContentDiv = styled.div<ContentDivProps>`
   margin-top: ${({ isExpanded }) => (isExpanded ? "36px" : "0")};
   flex-direction: column;
   gap: 16px;
+  @media screen and (max-width: 800px) {
+    width: 200px;
+    gap: 5px;
+  }
+`;
+
+export const ContentMobileDiv = styled.div`
+  width: 355px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  @media screen and (max-width: 800px) {
+    width: 200px;
+    gap: 5px;
+  }
 `;
 
 export const ProductNameWrapper = styled.div`
@@ -105,12 +174,19 @@ export const ProductNameWrapper = styled.div`
 export const ProductName = styled.span`
   font-size: 20px;
   font-weight: bold;
+  @media screen and (max-width: 800px) {
+    font-size: 16px;
+    font-weight: 600;
+  }
 `;
 
 export const ProductModelNo = styled.span`
   font-size: 12px;
   font-weight: medium;
   color: #767676;
+  @media screen and (max-width: 800px) {
+    font-weight: 400;
+  }
 `;
 
 export const ReviewPriceWrapper = styled.div`
@@ -128,6 +204,10 @@ export const ReviewWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
+  @media screen and (max-width: 800px) {
+    gap: px;
+    justify-content: center;
+  }
 `;
 
 export const RatingSpan = styled.span`
@@ -153,12 +233,18 @@ export const PriceHead = styled.span`
   font-size: 14px;
   font-weight: medium;
   color: #767676;
+  @media screen and (max-width: 800px) {
+    font-size: 13px;
+  }
 `;
 
 export const Price = styled.span`
   font-size: 20px;
   font-weight: bold;
   color: ${theme.bordercolor};
+  @media screen and (max-width: 800px) {
+    font-size: 16px;
+  }
 `;
 
 export const ExpandMoreIconWrapper = styled.div`
@@ -190,7 +276,14 @@ export const AccordionDetailsWrapper = styled(AccordionDetails)`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 0 45px 30px 0;
+  padding: 0 0 10px 15px;
+`;
+
+export const AccordionDetailsMobileWrapper = styled(AccordionDetails)`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-left: 20px;
 `;
 
 export const ReviewSummaryHead = styled.span`

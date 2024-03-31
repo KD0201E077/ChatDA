@@ -2,8 +2,12 @@ import styled from "@emotion/styled";
 import theme from "@assets/style/theme.module.scss";
 import { Dialog, IconButton } from "@mui/material";
 
+interface openProps {
+  isOpen: boolean;
+}
+
 export const WholeWrapper = styled.div`
-  position: relative;
+  /* position: relative; */
 `;
 
 export const ChatMainModal = styled(Dialog)`
@@ -26,12 +30,17 @@ export const ChatMainModal = styled(Dialog)`
     margin: 0;
     z-index: 1300;
 
-    /* @media screen and (max-width: 800px) {
-      width: 97.5vw;
-      height: 100vh;
-      right: 0;
-    } */
+    @media screen and (max-width: 800px) {
+      width: 390px;
+      right: 86px;
+      bottom: 70px;
+    }
   }
+`;
+export const ChatExpandModalWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  position: relative;
 `;
 
 export const ChatExpandModal = styled(ChatMainModal)`
@@ -42,7 +51,7 @@ export const ChatExpandModal = styled(ChatMainModal)`
 
   & .MuiDialog-paper {
     padding: 30px;
-    width: fit-content;
+    width: 100%;
     max-width: 890px;
     z-index: 1299;
     display: flex;
@@ -55,13 +64,15 @@ export const ChatExpandModal = styled(ChatMainModal)`
     user-select: none;
 
     @media screen and (max-width: 800px) {
-      width: 100%;
+      z-index: 1700;
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      width: 410px;
       max-width: none;
       height: 87%;
       border-radius: 15px 15px 0 0;
-      border-right: none;
-      bottom: 0;
-      right: 0;
+      /* border-right: none; */
     }
 
     ::-webkit-scrollbar {
@@ -92,9 +103,28 @@ export const ChatModalBackdrop = styled.div<{ open: boolean; expandOpen: boolean
   transition: all 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 `;
 
+export const ChatExpandModalMobileBackDrop = styled.div<openProps>`
+  position: fixed;
+  z-index: 1399;
+  width: 100%;
+  top: 0;
+  background-color: ${({ isOpen }) => (isOpen ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0)")};
+`;
+
+export const ChatExpandModalMobile = styled.div<openProps>`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 87%;
+  background-color: white;
+  z-index: 1400;
+  display: ${({ isOpen }) => (isOpen ? "block" : "none")};
+`;
+
 export const ChatMainWrapper = styled.div`
   width: 100%;
   height: 100%;
+  position: relative;
 `;
 
 export const ChatMainHeader = styled.div`

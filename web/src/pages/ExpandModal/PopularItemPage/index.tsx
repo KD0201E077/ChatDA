@@ -17,35 +17,6 @@ export default function PopularItemPage() {
   }, [response]);
 
   const PIProps: T.PopularItemProps[] = response?.data.modelList;
-  // const PIProps: T.PopularItemProps[] = [
-  //   {
-  //     제품명: "BESPOKE 냉장고 4도어 875 L",
-  //     제품_코드: "RF85C900F01",
-  //     혜택가: "2,000,000",
-  //     imageUrl: "string",
-  //     reviewCount: "342",
-  //     reviewSummary: "정말 감동적인 상품이에요",
-  //     rating: "4.5",
-  //   },
-  //   {
-  //     제품명: "BESPOKE 냉장고 4도어 699 L",
-  //     제품_코드: "RF85C900F01",
-  //     혜택가: "1,999,998",
-  //     imageUrl: "string",
-  //     reviewCount: "342",
-  //     reviewSummary: "전체적으로 평이 좋다",
-  //     rating: "4.8",
-  //   },
-  //   {
-  //     제품명: "BESPOKE 냉장고 2332도어",
-  //     제품_코드: "RF85C900F01",
-  //     혜택가: "2,000,000",
-  //     imageUrl: "string",
-  //     reviewCount: "342",
-  //     reviewSummary: "정말 감동적인 상품이에요",
-  //     rating: "5.0",
-  //   },
-  // ];
 
   return (
     <>
